@@ -16,7 +16,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7645FDD0-5DE4-450C-9818-DA30C79E218A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LEDAWordCount</RootNamespace>
+    <RootNamespace>ConvexHull</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
