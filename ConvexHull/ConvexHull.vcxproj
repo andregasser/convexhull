@@ -11,7 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConvexHullDemo.cpp" />
     <ClCompile Include="ConvexHull.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ConvexHull.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7645FDD0-5DE4-450C-9818-DA30C79E218A}</ProjectGuid>
