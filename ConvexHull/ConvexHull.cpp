@@ -23,58 +23,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /// </summary>
 /// <param name="points">The points.</param>
 /// <returns>Returns a list containing the points of the convex hull in clockwise order.</returns>
-leda::list<leda::point>* CalcConvexHull(leda::list<leda::point> *points)
+void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *points)
 {
-	leda::list<leda::point> l_upper, l_lower, l;
+	leda::list<leda::point> l_lower, l;
 	leda::list_item item;
 	leda::point p1, p2, p_i;
 	
+	//DumpList(points);
+
 	// We must first sort the points along the x-axis
 	SortPoints(points);
+
+	//DumpList(points);
 
 	// Build upper hull
 	item = points->get_item(0);
 	p1 = points->contents(item);
-	l_upper.append(p1);
-	std::wstringstream wss;
-	wss << "p1.xcoord() = " << p1.xcoord() << "\n";
-	OutputDebugString(wss.str().c_str());
+	l_upper->append(p1);
 	
 	item = points->get_item(1);
 	p2 = points->contents(item);
-	l_upper.append(p2);
-	std::wstringstream wss2;
-	wss2 << "p2.xcoord() = " << p2.xcoord() << "\n";
-	OutputDebugString(wss2.str().c_str());
+	l_upper->append(p2);
 	
+	// Mark items in list for removal
 	for (int i = 2; i < points->size(); i++)
 	{
 		// Append point p_i to l_upper
 		item = points->get_item(i);
 		p_i = points->contents(item);
-		std::wstringstream wss3;
-		wss3 << "p_" << i << ".xcoord() = " << p_i.xcoord() << "\n";
-		OutputDebugString(wss3.str().c_str());
-				
-		l_upper.append(p_i);
+		l_upper->append(p_i);
 
-		// Check if l_upper has at least three points. Also check if the last three points
-		// in the list make a left turn. If both conditions are true, we must remove the middle
-		// point of the last three points.
-		while (HasMoreThanTwoPoints(&l_upper) && LastThreePointsTurnLeft(&l_upper))
+		// Check if the last three points in the list make a left turn. 
+		// If yes, we must remove the middle point of the last three points.
+		DebugText("Before Delete");
+		DumpList(l_upper);
+		while (LastThreePointsTurnLeft(l_upper))
 		{
-			DeleteMiddleOfLastThree(&l_upper);
+			DeleteMiddleOfLastThree(l_upper);
+			DebugText("After Delete");
+			DumpList(l_upper);
 		}
-
-
 	}
 
-
+	// Remove items from list
 
 	// Build lower hull
 
-
-	return &l_upper;
+	//DumpList(&l_upper);
 }
 
 /// <summary>
@@ -89,9 +84,6 @@ void SortPoints(leda::list<leda::point> *points)
 	{
 		leda::list_item item = points->get_item(i);
 		leda::point p = points->contents(item);
-		std::wstringstream wss;
-		wss << p.xcoord() << "\n";
-		OutputDebugString(wss.str().c_str());
 	}
 }
 
@@ -122,9 +114,9 @@ int ComparePoints(const leda::point &p1, const leda::point &p2)
 /// </summary>
 /// <param name="points">The points.</param>
 /// <returns>Returns <code>true</code> if the list contains at least three points; otherwise <code>false</code>.</returns>
-bool HasMoreThanTwoPoints(leda::list<leda::point> *points)
+bool HasAtLeastThreePoints(leda::list<leda::point> *points)
 {
-	return points->size() > 2;
+	return points->size() >= 3;
 }
 
 /// <summary>
@@ -135,6 +127,8 @@ bool HasMoreThanTwoPoints(leda::list<leda::point> *points)
 /// <returns>Returns <code>true</code> if the last three points in the list represent a left turn; otherwise <code>false</code>.</returns>
 bool LastThreePointsTurnLeft(leda::list<leda::point> *points)
 {
+	if (!HasAtLeastThreePoints(points)) return false;
+	
 	leda::list_item item;
 	int lastElemIndex = points->size() - 1;
 	
@@ -161,6 +155,28 @@ bool LastThreePointsTurnLeft(leda::list<leda::point> *points)
 /// <param name="points">The points.</param>
 void DeleteMiddleOfLastThree(leda::list<leda::point> *points)
 {
-	leda::list<leda::point> p = (*points);
-	p.erase(p.get_item(p.size() - 2));
+	points->erase(points->get_item(points->size() - 2));
+}
+
+/// <summary>
+/// Dumps the list.
+/// </summary>
+/// <param name="points">The points.</param>
+void DumpList(leda::list<leda::point> *points)
+{
+	for (int i = 0; i < points->size(); i++)
+	{
+		std::wstringstream wsstream;
+		leda::list_item item = points->get_item(i);
+		leda::point p = points->contents(item);
+		wsstream << "Point " << i << ": " << "X:" << p.xcoord() << ", Y:" << p.ycoord() << "\n";
+		OutputDebugString(wsstream.str().c_str());
+	}
+}
+
+void DebugText(char* text)
+{
+	std::wstringstream wsstream;
+	wsstream << text << "\n";
+	OutputDebugString(wsstream.str().c_str());
 }

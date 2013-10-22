@@ -46,16 +46,23 @@ void main()
 		
 		// Read mouse and save point in p
 		int btnClick = W.read_mouse(p);
+		
+		// Handle buttons
 		if (btnClick == btnExit)
 		{
 			W.close();
-			break;
+			return;
 		}
 
 		if (btnClick == btnCalcConvexHull) 
 		{ 
-			leda::list<leda::point> *convexHull = CalcConvexHull(&points);
-			DrawConvexHull(&W, convexHull); 
+			//DumpList(&points);
+			leda::list<leda::point> convexHull;
+			CalcConvexHull(&convexHull, &points);
+			DebugText("Before Draw");
+			DumpList(&convexHull);
+			
+			DrawConvexHull(&W, &convexHull); 
 			continue;
 		}
 
@@ -80,21 +87,18 @@ void main()
 /// <param name="points">The points.</param>
 void DrawConvexHull(leda::window *W, leda::list<leda::point> *points)
 {
-	// Iterate over list and connect points using segments
-	leda::list<leda::point> pts = *points;
-	
-	if (pts.size() >= 2)
+	if (points->size() >= 2)
 	{
-		leda::list_item item = pts.get_item(0);
-		leda::point p = pts.contents(item);
+		leda::list_item item = points->get_item(0);
+		leda::point p = points->contents(item);
 
-		for (int i = 1; i < pts.size(); i++)
+		for (int i = 1; i < points->size(); i++)
 		{
-			leda::list_item item = pts.get_item(i);
-			leda::point q = pts.contents(item);
+			leda::list_item item = points->get_item(i);
+			leda::point q = points->contents(item);
 
 			// Connect points
-			(*W).draw_segment(p, q, leda_red);
+			W->draw_segment(p, q, leda_red);
 
 			p = q;
 		}
