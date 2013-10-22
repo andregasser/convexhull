@@ -29,12 +29,8 @@ void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *p
 	leda::list_item item;
 	leda::point p1, p2, p_i;
 	
-	//DumpList(points);
-
 	// We must first sort the points along the x-axis
 	SortPoints(points);
-
-	//DumpList(points);
 
 	// Build upper hull
 	item = points->get_item(0);
@@ -55,21 +51,15 @@ void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *p
 
 		// Check if the last three points in the list make a left turn. 
 		// If yes, we must remove the middle point of the last three points.
-		DebugText("Before Delete");
-		DumpList(l_upper);
 		while (LastThreePointsTurnLeft(l_upper))
 		{
 			DeleteMiddleOfLastThree(l_upper);
-			DebugText("After Delete");
-			DumpList(l_upper);
 		}
 	}
 
 	// Remove items from list
 
 	// Build lower hull
-
-	//DumpList(&l_upper);
 }
 
 /// <summary>
@@ -174,6 +164,10 @@ void DumpList(leda::list<leda::point> *points)
 	}
 }
 
+/// <summary>
+/// Debugs the text.
+/// </summary>
+/// <param name="text">The text.</param>
 void DebugText(char* text)
 {
 	std::wstringstream wsstream;
