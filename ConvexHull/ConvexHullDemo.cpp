@@ -102,6 +102,8 @@ void DrawConvexHull(leda::window *W, leda::list<leda::point> *points)
 
 			p = q;
 		}
+
+		W->draw_segment(p, points->contents(points->get_item(0)), leda_red);
 	}
 }
 

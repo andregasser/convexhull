@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <LEDA/graphics/window.h>
 #include <LEDA/core/list.h>
 
-void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *points);
+void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *points);
 void SortPoints(leda::list<leda::point> *points);
 int ComparePoints(const leda::point &p1, const leda::point &p2);
 bool HasMoreThanTwoPoints(leda::list<leda::point> *points);

@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /// <summary>
 /// Calculates the convex hull.
 /// </summary>
+/// <param name="l_hull">The l_hull.</param>
 /// <param name="points">The points.</param>
-/// <returns>Returns a list containing the points of the convex hull in clockwise order.</returns>
-void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *points)
+void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *points)
 {
-	leda::list<leda::point> l_lower, l;
+	leda::list<leda::point> l_upper, l_lower;
 	leda::list_item item;
 	leda::point p1, p2, p_i;
 	
@@ -35,31 +35,59 @@ void CalcConvexHull(leda::list<leda::point> *l_upper, leda::list<leda::point> *p
 	// Build upper hull
 	item = points->get_item(0);
 	p1 = points->contents(item);
-	l_upper->append(p1);
+	l_upper.append(p1);
 	
 	item = points->get_item(1);
 	p2 = points->contents(item);
-	l_upper->append(p2);
+	l_upper.append(p2);
 	
-	// Mark items in list for removal
 	for (int i = 2; i < points->size(); i++)
 	{
 		// Append point p_i to l_upper
 		item = points->get_item(i);
 		p_i = points->contents(item);
-		l_upper->append(p_i);
+		l_upper.append(p_i);
 
 		// Check if the last three points in the list make a left turn. 
 		// If yes, we must remove the middle point of the last three points.
-		while (LastThreePointsTurnLeft(l_upper))
+		while (LastThreePointsTurnLeft(&l_upper))
 		{
-			DeleteMiddleOfLastThree(l_upper);
+			DeleteMiddleOfLastThree(&l_upper);
 		}
 	}
 
-	// Remove items from list
-
 	// Build lower hull
+	item = points->get_item(points->size() - 1);
+	p1 = points->contents(item);
+	l_lower.append(p1);
+	
+	item = points->get_item(points->size() - 2);
+	p2 = points->contents(item);
+	l_lower.append(p2);
+
+	for (int i = points->size() - 3; i >= 0; i--)
+	{
+		// Append point p_i to l_lower
+		item = points->get_item(i);
+		p_i = points->contents(item);
+		l_lower.append(p_i);
+
+		// Check if the last three points in the list make a left turn. 
+		// If yes, we must remove the middle point of the last three points.
+		while (LastThreePointsTurnLeft(&l_lower))
+		{
+			DeleteMiddleOfLastThree(&l_lower);
+		}
+	}
+
+	// Remove first an last point from l_lower to aoi duplication
+	// where the points of upper and lower hull meet.
+	l_lower.erase(l_lower.get_item(0));
+	l_lower.erase(l_lower.get_item(l_lower.size() - 1));
+
+	// Build convex hull by concatenating upper and lower hull.
+	l_hull->conc(l_upper);
+	l_hull->conc(l_lower);
 }
 
 /// <summary>
