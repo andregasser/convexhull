@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConvexHull.h"
 
 /// <summary>
-/// Calculates the convex hull.
+/// Calculates the convex hull of a given set of points.
 /// </summary>
-/// <param name="l_hull">The l_hull.</param>
-/// <param name="points">The points.</param>
+/// <param name="l_hull">The list containing the points of the convex hull.</param>
+/// <param name="points">The set of points.</param>
 void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *points)
 {
 	leda::list<leda::point> l_upper, l_lower;
@@ -48,9 +48,9 @@ void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *po
 		p_i = points->contents(item);
 		l_upper.append(p_i);
 
-		// Check if the last three points in the list make a left turn. 
-		// If yes, we must remove the middle point of the last three points.
-		while (LastThreePointsTurnLeft(&l_upper))
+		// Check if the last three points in the list make a right turn. 
+		// If no, we must remove the middle point of the last three points.
+		while (!LastThreePointsTurnRight(&l_upper))
 		{
 			DeleteMiddleOfLastThree(&l_upper);
 		}
@@ -72,9 +72,9 @@ void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *po
 		p_i = points->contents(item);
 		l_lower.append(p_i);
 
-		// Check if the last three points in the list make a left turn. 
-		// If yes, we must remove the middle point of the last three points.
-		while (LastThreePointsTurnLeft(&l_lower))
+		// Check if the last three points in the list make a right turn. 
+		// If no, we must remove the middle point of the last three points.
+		while (!LastThreePointsTurnRight(&l_lower))
 		{
 			DeleteMiddleOfLastThree(&l_lower);
 		}
@@ -108,8 +108,8 @@ void SortPoints(leda::list<leda::point> *points)
 /// <summary>
 /// Compares two point objects by their x-coords.
 /// </summary>
-/// <param name="p1">The p1.</param>
-/// <param name="p2">The p2.</param>
+/// <param name="p1">The first point.</param>
+/// <param name="p2">The second point.</param>
 /// <returns>Returns -1 if p1 &lt; p2, 1 if p1 &gt; p2 and 0 if p1 == p2.</returns>
 int ComparePoints(const leda::point &p1, const leda::point &p2)
 {
@@ -138,12 +138,13 @@ bool HasAtLeastThreePoints(leda::list<leda::point> *points)
 }
 
 /// <summary>
-/// Determines if the last three points in the list represent a left turn. 
-/// We check this by calculating the cross product of two vectors.
+/// Determines if the last three points in the list represent a right turn.
 /// </summary>
 /// <param name="points">The points.</param>
-/// <returns>Returns <code>true</code> if the last three points in the list represent a left turn; otherwise <code>false</code>.</returns>
-bool LastThreePointsTurnLeft(leda::list<leda::point> *points)
+/// <returns>
+/// Returns <code>true</code> if the last three points in the list represent a right turn; otherwise <code>false</code>.
+/// </returns>
+bool LastThreePointsTurnRight(leda::list<leda::point> *points)
 {
 	if (!HasAtLeastThreePoints(points)) return false;
 	
@@ -158,13 +159,9 @@ bool LastThreePointsTurnLeft(leda::list<leda::point> *points)
 	item = points->get_item(lastElemIndex);
 	leda::point p3 = points->contents(item);
 
-	// Calculate the angle between the two vectors (p1,p2) and (p1,p3).
-	// This is required to determine, if they represent a left turn or not.
-	// We also report a left turn, if the vectors are collinear.
-	bool left_turn = leda::left_turn(p1, p2, p3);
-	bool collinear = leda::collinear(p1, p2, p3);
+	bool right_turn = leda::right_turn(p1, p2, p3);
 	
-	return left_turn || collinear;
+	return right_turn;
 }
 
 /// <summary>
@@ -193,7 +190,7 @@ void DumpList(leda::list<leda::point> *points)
 }
 
 /// <summary>
-/// Debugs the text.
+/// Write debug message to console.
 /// </summary>
 /// <param name="text">The text.</param>
 void DebugText(char* text)

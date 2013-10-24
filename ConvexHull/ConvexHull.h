@@ -29,7 +29,7 @@ void CalcConvexHull(leda::list<leda::point> *l_hull, leda::list<leda::point> *po
 void SortPoints(leda::list<leda::point> *points);
 int ComparePoints(const leda::point &p1, const leda::point &p2);
 bool HasMoreThanTwoPoints(leda::list<leda::point> *points);
-bool LastThreePointsTurnLeft(leda::list<leda::point> *points);
+bool LastThreePointsTurnRight(leda::list<leda::point> *points);
 void DeleteMiddleOfLastThree(leda::list<leda::point> *points);
 void DumpList(leda::list<leda::point> *points);
 void DebugText(char* text);
